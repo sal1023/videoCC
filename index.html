@@ -1,0 +1,42 @@
+<html>
+<head>
+<script type="text/javascript" src="http://jwpsrv.com/library/qhNfTJFiEeK7LSIACpYGxA.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+</head>
+
+<body>
+<div id="myElement">Loading the player...</div>
+<script type="text/javascript">
+var playerInstance = jwplayer("myElement");
+playerInstance.setup({
+    //file: 'http://d3mwaq4ir96ox7.cloudfront.net/7000/38000/37142_53c4ef1ee9b7c_sWObIqZ38M4w7jX.mp4',
+    file: "CaddyshackCinderella.mp4",
+    //image: "//example.com/uploads/myPoster.jpg",
+    primary: "html5", 
+    width: 640,
+    height: 360,
+    title: 'Basic Video Embed',
+    tracks: [{ 
+            file: "captions-en.srt", 
+            label: "English",
+            kind: "captions",
+            "default": true 
+        }]
+});
+</script>
+
+
+<!--input name="like" id="like" value="Like" type="submit" /-->
+<!--input id="srt" type="button" value="Get Transcript"/-->
+<a href="/generatecc"><input type="button" value="get Transcript" /></a>
+<script>
+        $('#srt').click(function(e){
+            e.preventDefault();
+            $.post('/generatecc')
+        });
+</script>
+
+
+</body>
+
+</html>
