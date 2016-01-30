@@ -2,15 +2,16 @@
 <head>
 <script type="text/javascript" src="http://jwpsrv.com/library/qhNfTJFiEeK7LSIACpYGxA.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 </head>
 
 <body>
 <div id="myElement">Loading the player...</div>
 <script type="text/javascript">
+var fileName="putThatCoffeeDown.mp4";
 var playerInstance = jwplayer("myElement");
 playerInstance.setup({
-    //file: 'http://d3mwaq4ir96ox7.cloudfront.net/7000/38000/37142_53c4ef1ee9b7c_sWObIqZ38M4w7jX.mp4',
-    file: "CaddyshackCinderella.mp4",
+    file: fileName,
     //image: "//example.com/uploads/myPoster.jpg",
     primary: "html5", 
     width: 640,
@@ -26,16 +27,45 @@ playerInstance.setup({
 </script>
 
 
-<!--input name="like" id="like" value="Like" type="submit" /-->
-<!--input id="srt" type="button" value="Get Transcript"/-->
-<a href="/generatecc"><input type="button" value="get Transcript" /></a>
+<button id="action-button">Click me to transcribe video and get SRT file!</button>
+<div id="info"></div>
+
 <script>
-        $('#srt').click(function(e){
-            e.preventDefault();
-            $.post('/generatecc')
-        });
+$('#action-button').click(function() {
+   $.ajax({
+      url: '/cc',
+      data: {
+         format: 'json'
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+      //error: function() {
+      //   $('#info').html('<p>An error has occurred</p>');
+      //},
+      dataType: 'json',
+      success: function(data) {
+         var $mediaId = $('<p>').text(data.mediaId);
+         var $link = $('<p>').text(data.fileUrl);
+         var $rStatus = $('<p>').text(data.requestStatus);
+         $('#info')
+            .append($rStatus)
+            .append($mediaId)
+            .append($link);
+      },
+      type: 'GET'
+   });
+});
 </script>
 
+<!--script>
+  var socket = io();
+  //var socket = io.connect('http://localhost');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script-->
 
 </body>
 
