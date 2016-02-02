@@ -1,0 +1,59 @@
+html
+  head
+    script(type='text/javascript', src='http://jwpsrv.com/library/qhNfTJFiEeK7LSIACpYGxA.js')
+    script(src='http://code.jquery.com/jquery-1.11.1.js')
+    script(src='https://cdn.socket.io/socket.io-1.2.0.js')
+  body
+    #myElement Loading the player...
+    script(type='text/javascript').
+      var fileName= #{file}
+      console.log(fileName);  
+      var playerInstance = jwplayer("myElement");
+      playerInstance.setup({
+         file: fileName,
+         //image: "//example.com/uploads/myPoster.jpg",
+         primary: "html5",
+         width: 640,
+         height: 360,
+         title: 'Basic Video Embed',
+         tracks: [{
+            file: "captions-en.srt",
+            label: "English",
+            kind: "captions",
+            "default": true
+         }]
+      });
+    button#action-button Click me to transcribe video and get SRT file!
+    #info
+    script.
+      $('#action-button').click(function() {
+         $.ajax({
+            url: '/cc',
+            data: {
+               format: 'json'
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               console.log(textStatus, errorThrown);
+            },
+            dataType: 'json',
+            success: function(data) {
+               var $mediaId = $('<p>').text(data.mediaId);
+               var $link = $('<p>').text(data.fileUrl);
+               var $rStatus = $('<p>').text(data.requestStatus);
+               $('#info')
+                  .append($rStatus)
+                  .append($mediaId)
+                  .append($link);
+            },
+            type: 'GET'
+         });
+      });
+
+      script>
+      var socket = io();
+      //var socket = io.connect('http://localhost');
+      socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my other event', { my: 'data' });
+      });
+      </script

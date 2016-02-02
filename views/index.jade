@@ -1,0 +1,11 @@
+html
+  head
+    title= title
+  body
+
+  //select
+  //   each item, i in files
+  //      option(value=item) Book #{item}
+  each item in files
+        a(href='/player?file='+item) #{item}
+        br

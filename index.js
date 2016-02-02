@@ -14,20 +14,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-var pass='letmeon';
-var url='https://api.dev.voicebase.com/services';
-var key='2A425147-7577-9542-3AED-4BCF806BB6EE';
+
+url = process.env.vbapiurl;
+key = process.env.vbkey;
+pass = process.env.vbpw;
+//var pass='letmeon';
+//var url='https://api.dev.voicebase.com/services';
+//var key='2A425147-7577-9542-3AED-4BCF806BB6EE';
 //var key='1586E668-F431-C9D6-D68B-88641B5C3EB8'
 //var pass='mrneutron';
 //var url=  "https://api.voicebase.com/services";
-//var callback="http://requestb.in/13o1igh1";
-//var eCallback="http://requestb.in/13o1igh1";
 var scratchDir = '/tmp/';
 
 //Workaround to have thos global because I can not retriee the callback params :(
 var mediaId;
 var srt;
-var fileName="putThatCoffeeDown.mp4";
+var fileName;
 
 
 //io.on('connection', function (socket) {
@@ -38,29 +40,45 @@ var fileName="putThatCoffeeDown.mp4";
 //});
 
 
-app.get('/', function(req, res){
-  console.log(__dirname)
-  res.sendFile(__dirname + '/index.html');
+//app.get('/', function(req, res){
+//  console.log(__dirname)
+//  res.sendFile(__dirname + '/index.html');
+//});
+function endsWith(str) {
+    var suffix='.mp4';
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+app.set('view engine', 'jade');
+app.get('/', function (req, res) {
+  var files=fs.readdirSync('public');
+  var filteredFiles = files.filter(endsWith);
+  res.render('index', { title: 'Hey', files: filteredFiles});
+});
+
+
+
+app.get('/player', function (req, res) {
+  var file = req.param('file');
+  fileName = file;
+  console.log(file);
+  res.render('player', { file:file });
 });
 
 
 app.get("/cc", requestSRT); 
 
 function requestSRT(req, res) {
-    var fullUrl = req.protocol + '://' + req.get('host') + '/callback';
-    //var fullUrl='http://requestb.in/uka2cruk';
-    //var fullUrl = 'http://73.252.201.186:3000/callback';
+    var callbackUrl = req.protocol + '://' + req.get('host') + '/callback';
+    //var callbackUrl = 'https://' + req.get('host') + '/callback';
+    console.log(callbackUrl);
     var file = 'public/'+fileName;
+    console.log(file);
     //var audioFile = extractAudio(scratchDir,file);
-    //uploadFile(audioFile,fullUrl,fullUrl);
-    uploadFile(file, fullUrl,fullUrl, res, afterUpload);
-    //var data = {"mediaId":"xxxx","requestStatus":"SUCCESS","fileUrl":"xxxxx"};
-    //res.json(data);
-    //res.send(data);
+    uploadFile(file, callbackUrl,callbackUrl, res, afterUpload);
 }
 
 function afterUpload(err, res, data) {
-    //var data = {"mediaId":"xxxx","requestStatus":"SUCCESS","fileUrl":"xxxxx"};
     res.json(data);
 }
 
@@ -130,7 +148,7 @@ function getSRT(mediaId) {
                }
               console.log('Upload successful!  Server responded with:', body);
               srt = body;
-              fs.writeFile("public//captions-en.srt", srt, function(err) {
+              fs.writeFile('public/'+filename+'-en.srt', srt, function(err) {
                   if(err) {
                       return console.log(err);
                   }
@@ -187,4 +205,5 @@ function generateUUID(){
        });
        return uuid;
 }
+
 
