@@ -26,16 +26,6 @@ var bearerToken = nconf.get('vbtoken');
 var baseUrl = nconf.get('baseurl');
 var callbackOverride = nconf.get('callback');
 var scratchDir = nconf.get('scratchdir');
-//'https://apis.voicebase.com/v2-beta/'
-//'/tmp/';
-
-//console.log('baseurl: ' + baseUrl);
-//console.log('vbtoken: ' + bearerToken);
-//console.log('callback: ' + callbackOverride);
-//console.log('scratchDir: ' + scratchDir);
-
-//Workaround to have thos global because I can not retriee the callback params :(
-//var callbackUrl = 'http://73.252.201.186:3000/callback';
 
 function endsWith(str) {
     var suffix='.mp4';
