@@ -1,4 +1,4 @@
 {
   "baseurl": "https://apis.voicebase.com/v2-beta/",
-  "scratchDir": "/tmp/"
+  "scratchdir": "/tmp/"
 }

@@ -24,18 +24,18 @@ app.set('view engine', 'jade');
 
 var bearerToken = nconf.get('vbtoken');
 var baseUrl = nconf.get('baseurl');
-var callback = nconf.get('callback');
+var callbackOverride = nconf.get('callback');
 var scratchDir = nconf.get('scratchdir');
 //'https://apis.voicebase.com/v2-beta/'
 //'/tmp/';
 
 console.log('baseurl: ' + baseUrl);
 console.log('vbtoken: ' + bearerToken);
-console.log('callback: ' + callback);
+console.log('callback: ' + callbackOverride);
 console.log('scratchDir: ' + scratchDir);
 
 //Workaround to have thos global because I can not retriee the callback params :(
-var callbackUrl = 'http://73.252.201.186:3000/callback2';
+//var callbackUrl = 'http://73.252.201.186:3000/callback';
 
 function endsWith(str) {
     var suffix='.mp4';
@@ -66,10 +66,11 @@ app.get('/player', function (req, res) {
 //
 app.get("/cc", requestSRT); 
 function requestSRT(req, res) {
-    //var callbackUrl = req.protocol + '://' + req.get('host') + '/callback';
-    //var callbackUrl = 'http://73.252.201.186:3000/callback2';
+    var callbackUrl = req.protocol + '://' + req.get('host') + '/callback';
+    if (callbackOverride) {
+        callbackUrl=callbackOverride;
+    }
     //console.log(callbackUrl);
-    //console.log(fileName);
     //TODO: Get the filename from the request (and not use the global var)
     var audioFile = extractAudio(scratchDir,fileName,res);
 }
@@ -209,7 +210,7 @@ function getSRT(mediaId) {
 
 //v2 callback code
 //   Note one difference with v1, is that v2 also can receive data (as specified in publish section of the configuration provide at media POST time)
-app.post('/callback2', textParser, function(req, res){
+app.post('/callback', textParser, function(req, res){
     data = JSON.parse(req.body);
     x = data.media.metadata.external.id;
     //console.log(data.media.transcripts.srt);
@@ -224,7 +225,7 @@ app.post('/callback2', textParser, function(req, res){
 
 //v1 callback code
 //  Note one difference with v2, is that it has to make a request to get the srt data.  callback is just a notifier. 
-app.post('/callback', textParser, function(req, res){
+app.post('/callbackv1', textParser, function(req, res){
     console.log('state : ' + req.body.state);
     console.log('mediaId : ' + req.body.mediaId);
     console.log('time charged : ' + req.body.timeCharged);
