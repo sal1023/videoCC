@@ -29,10 +29,10 @@ var scratchDir = nconf.get('scratchdir');
 //'https://apis.voicebase.com/v2-beta/'
 //'/tmp/';
 
-console.log('baseurl: ' + baseUrl);
-console.log('vbtoken: ' + bearerToken);
-console.log('callback: ' + callbackOverride);
-console.log('scratchDir: ' + scratchDir);
+//console.log('baseurl: ' + baseUrl);
+//console.log('vbtoken: ' + bearerToken);
+//console.log('callback: ' + callbackOverride);
+//console.log('scratchDir: ' + scratchDir);
 
 //Workaround to have thos global because I can not retriee the callback params :(
 //var callbackUrl = 'http://73.252.201.186:3000/callback';
@@ -72,11 +72,11 @@ function requestSRT(req, res) {
     }
     //console.log(callbackUrl);
     //TODO: Get the filename from the request (and not use the global var)
-    var audioFile = extractAudio(scratchDir,fileName,res);
+    var audioFile = extractAudio(scratchDir,fileName,callbackUrl,res);
 }
 
 // uses ffmpeg to extract the audio track (without transcoding) from a video file.  This will be more efficient then sending the entire video
-function extractAudio(scratchDir,fileName,res) {
+function extractAudio(scratchDir, fileName, callbackUrl, res) {
    var file = 'public/'+fileName;
    var ext = file.substr(file.lastIndexOf('.') );
    var audioFile = scratchDir+generateUUID()+ext;
@@ -89,12 +89,12 @@ function extractAudio(scratchDir,fileName,res) {
             return console.log('exec error: ' + err);
         }  
         externalId=fileName;
-        afterAudioExtracted(audioFile,externalId, res);
+        afterAudioExtracted(audioFile,externalId, callbackUrl, res);
    });
 }
 
 //after extraction is done, use REST api to upload the audio (note the callbackUrl to get notified when it is ready)
-function afterAudioExtracted(audioFile, externalId, res) {
+function afterAudioExtracted(audioFile, externalId, callbackUrl, res) {
     uploadFileV2(audioFile,externalId, callbackUrl, res, afterUpload);
 }
 
@@ -128,7 +128,7 @@ function uploadFileV2(file, externalId, callbackUrl, res, callback) {
    var formData = { media: fs.createReadStream(file), configuration: JSON.stringify(config), metadata: JSON.stringify(metadata)};
 
    request.post({
-         url: baseurl+'media',
+         url: baseUrl+'media',
          json: true,
          formData: formData,
          headers: {'Authorization': 'Bearer '+bearerToken },
