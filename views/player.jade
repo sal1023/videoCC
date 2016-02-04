@@ -6,7 +6,6 @@ html
   body
     #myElement Loading the player...
     script(type='text/javascript').
-      //var fileName="putThatCoffeeDown.mp4";
       var fileName= '#{file}';
       var playerInstance = jwplayer("myElement");
       playerInstance.setup({
@@ -17,7 +16,7 @@ html
       height: 360,
       title: 'Basic Video Embed',
       tracks: [{
-      file: fileName+".srt",
+      file: fileName+"-en.srt",
       label: "English",
       kind: "captions",
       "default": true

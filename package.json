@@ -4,7 +4,7 @@
   "description": "Example of adding CC to a video on player page",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -12,6 +12,9 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
-    "multer": "^1.1.0"
+    "fs": "0.0.2",
+    "jade": "^1.11.0",
+    "nconf": "^0.8.4",
+    "request": "^2.69.0"
   }
 }
