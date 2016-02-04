@@ -9,6 +9,8 @@ This is a simple video steaming app that allows you to explore the features prov
    * player page uses JWPlayer to stream the file selected
    * player page has "generate closed caption" button, that will use the VoiceBase API to get an SRT for the video and copy to the demo server so that it can be displayed  in jwplayer 
 
+Limitation is that there is no notificaton on the web page when the srt has been downloaded an placed in correct location for jwplayer.  So  you need to refresh the web page and try and turn on the CC in the player to see the results.  Or you can look at server console.
+
 ## Prerequisites
 
    * ffmpeg should be insalled and in path
