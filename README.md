@@ -2,19 +2,19 @@
 
 ## Overview
 
-This is a simple video steaming app that allows you to explore the features provide by VoiceBase REST APPIs for machine generatd transcripts and closed captions.
+This is a simple video steaming app that shows how to use the VoiceBase REST APIs to get machine generated transcripts and closed captions.
 	
    * for demo purposes videos are streamed from node.  All files in public folder are streamable.
-   * Simple home page with links to each file in public folder
-   * player page uses JWPlayer to stream the file selected
-   * player page has "generate closed caption" button, that will use the VoiceBase API to get an SRT for the video and copy to the demo server so that it can be displayed  in jwplayer 
+   * Very simple home page with links to each file in public folder
+   * Player page uses JWPlayer to stream the file selected
+   * Player page has "generate closed caption" button, that will use the VoiceBase API to get an SRT for the video and copy to the demo server so that it can be displayed  in jwplayer 
 
-Limitation is that there is no notificaton on the web page when the srt has been downloaded an placed in correct location for jwplayer.  So  you need to refresh the web page and try and turn on the CC in the player to see the results.  Or you can look at server console.
+UI is very basic at this time.  Goal is show how to use the API to get the SRT file.  Additional limitation is that there is no notificaton on the web page when the srt has been downloaded and placed in correct location for the player.  So  you need to refresh the web page and try and turn on the CC in the player to see the results.  Or you can look at server console.
 
 ## Prerequisites
 
-   * ffmpeg should be insalled and in path
-   * A VoiceBase API account
+   * ffmpeg should be insalled and in path.  App will use ffmpeg to extract the audio to save bandwidth.
+   * You will need a VoiceBase API account
    * Machine that runs this app must receive a callback from voicebase when transcript is ready, so it must have a public IP
    
 ## Setting up the app
@@ -29,9 +29,9 @@ Limitation is that there is no notificaton on the web page when the srt has been
 
 There are 4 config variables
 
-   * baseurl: Thie baseurl is for the VoiceBase REST API and the default value should be fine as is. 
+   * baseurl: Thie baseurl is for the VoiceBase REST API and the default value should be fine as is (in config,json)
    * vbtoken: You will need to get your own VoiceBase Bearer token and specify it either as command line (--vbtoken <your-token-here>) or set an env var of same name 
-   * callback: If the machine you are running this one does not have a public IP, it is possible to use port forwarding but then you might also have to override the callback url.  The demo app will use the same base url that you use for the web app for the callback.   If you are port forwarding, you may need to use a local IP for your browser and then override the url with the public url for the callback.
+   * callback: If the machine you are running this on does not have a public IP, it is possible to use port forwarding on your router, but then you might also have to override the callback url.  By default, the demo app will use the same base url that you use for the web app for the callback.   If you are port forwarding, you may need to use a local IP for your browser and then override the url with the public url for the callback.
    * scratchDir: The scratchdir is where tmp files will be placed and is set to /tmp as a default
    
 ## References 
@@ -41,8 +41,10 @@ There are 4 config variables
 
 ## Code Example
 
+This is code to upload a file specifying a callbackUrl and externalId.
+
 ```javascript
-function uploadFileV2(file, externalId, callbackUrl, res, callback) {
+function uploadFile(file, externalId, callbackUrl, res, callback) {
 
    var config=    {configuration:{
                          publish: {
@@ -73,6 +75,8 @@ function uploadFileV2(file, externalId, callbackUrl, res, callback) {
 }
 ```
 
+This is example code for handling the callback POST and extracting the SRT data and writing it to a file.
+
 ```javascript
 app.post('/callback2', textParser, function(req, res){
     data = JSON.parse(req.body);
@@ -88,6 +92,7 @@ app.post('/callback2', textParser, function(req, res){
 
 ```
 
+This is example code showing how to extract the audio from a video without transcoding usin ffmpeg.
 
 ```javascript
 // uses ffmpeg to extract the audio track (without transcoding) from a video file.  This will be more efficient then sending the entire video
