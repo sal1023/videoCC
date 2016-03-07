@@ -1,7 +1,7 @@
 {
   "name": "videocc",
   "version": "1.0.0",
-  "description": "Example of adding CC to a video on player page using the VoiceBase api.”,
+  "description": "Example of adding CC to a video on player page using the VoiceBase api.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
